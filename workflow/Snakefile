@@ -2,8 +2,8 @@ import glob
 import os
 
 configfile: "config/config.yaml"
-SAMPLES = config["samples"]
-# SAMPLES = ["1076767"]
+# SAMPLES = config["samples"]
+SAMPLES = ["H2TMS2"]
 
 PROJ = "/u/scratch/a/andrewj/somatic/"
 REF = "/u/home/a/andrewj/ref/refdata-gex-GRCh38-2024-A"
