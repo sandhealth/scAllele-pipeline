@@ -25,7 +25,7 @@ echo " "
 
 source ~/.bashrc
 conda activate snakemake
-snakemake --cores 32 --resources diskio=2 --use-conda --rerun-triggers mtime
+snakemake --cores 16 --resources diskio=2 --use-conda --rerun-triggers mtime
 
 # echo job info on joblog:
 echo "Job $JOB_ID ended on:   " `hostname -s`
