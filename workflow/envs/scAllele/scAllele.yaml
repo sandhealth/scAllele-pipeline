@@ -1,0 +1,20 @@
+name: scAllele
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - python=3.11
+  - pip
+  - setuptools
+  - wheel
+  - gcc_linux-64
+  - gxx_linux-64
+  - zlib
+  - xz
+  - matplotlib
+  - scipy
+  - samtools
+  - pip:
+      - /u/home/a/andrewj/somatic/workflow/envs/scAllele/scAllele
+

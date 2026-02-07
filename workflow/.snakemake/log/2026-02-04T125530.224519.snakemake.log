@@ -1,0 +1,2 @@
+WorkflowError in file "/u/home/a/andrewj/somatic/workflow/Snakefile", line 4:
+Workflow defines configfile config/config.yaml but it is not present or accessible (full checked path: /u/home/a/andrewj/somatic/workflow/config/config.yaml).

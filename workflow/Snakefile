@@ -1,0 +1,101 @@
+import glob
+import os
+
+configfile: "config/config.yaml"
+SAMPLES = config["samples"]
+# SAMPLES = ["1076767"]
+
+PROJ = "/u/scratch/a/andrewj/somatic/"
+REF = "/u/home/a/andrewj/ref/refdata-gex-GRCh38-2024-A"
+GENOME_FASTA = "/u/home/a/andrewj/ref/Homo_sapiens.GRCh38.dna.primary_assembly.modified.fa"
+
+
+rule all:
+    input:
+        expand(PROJ + "filt-vcf/{sample}_filtered.vcf", sample=SAMPLES)
+
+rule filter_vcf:
+    input:
+        vcf = PROJ + "scAllele/{sample}.vcf"
+    output:
+        filt_vcf = PROJ + "filt-vcf/{sample}_filtered.vcf"
+    conda:
+        "envs/bcftools.yaml"
+    shell:
+        """
+        bcftools view -f PASS {input.vcf} -o {output.filt_vcf} -O v
+        """
+
+rule scAllele:
+    input:
+        bamdir = PROJ + "split-bam/{sample}",
+    threads: 8
+    output:
+        vcf = PROJ + "scAllele/{sample}.vcf"
+    params:
+        genome = GENOME_FASTA,
+        prefix = PROJ + "scAllele/{sample}"
+    conda:
+        "envs/scAllele/scAllele.yaml"
+    shell:
+        """
+        samtools index {input.bamdir}/*.bam -M -@ 8
+
+        bam_list=$(ls {input.bamdir}/*.bam | xargs echo | sed 's/ /,/g')
+        # find "$(pwd)" -name "*.bam" | xargs echo | sed 's/ /,/g'
+
+        cd {input.bamdir}
+        scAllele -n {threads} -g {params.genome} -o {params.prefix} -b ${{bam_list}}
+        """
+
+rule split_bam:
+    input:
+        bam = PROJ + "filtered-bam/{sample}_filtered.bam",
+        cell_barcodes = PROJ + "cell-barcodes/{sample}-TM-barcodes.txt"
+    output:
+        outdir = directory(PROJ + "split-bam/{sample}")
+    resources:
+        # Limits how many of this rule can be executed in parallel to avoid read/write bottleneck
+        diskio = 1
+    conda:
+        "envs/pysam.yaml"
+    script:
+        "scripts/split.py"
+
+rule filter_bam:
+    input:
+        bam = PROJ + "cellranger/{sample}/outs/possorted_genome_bam.bam"
+    output:
+        PROJ + "filtered-bam/{sample}_filtered.bam"
+    threads: 8
+    conda:
+        "envs/samtools.yaml"
+    shell:
+        """
+        (samtools view -H {input.bam}; samtools view -@ {threads} {input.bam} | grep "xf:i:25") | samtools view -@ {threads} -b - > {output}
+        """
+
+# Uses cellranger v9.0.1 installed in ~/bioinfo-tools
+rule cellranger_count:
+    input:
+        ref = REF
+    output:
+        bam = PROJ + "cellranger/{sample}/outs/possorted_genome_bam.bam"
+    params:
+        sample = "{sample}",
+        outdir = PROJ + "cellranger/{sample}",
+        fastq_dir = PROJ + "fastqs"
+    threads: 16
+    shell:
+        """
+        rm -rf {params.outdir}
+        cellranger count \
+            --id={params.sample} \
+            --fastqs={params.fastq_dir} \
+            --sample={params.sample} \
+            --transcriptome={input.ref} \
+            --localcores={threads} \
+            --output-dir={params.outdir} \
+            --create-bam=true
+        """
+
