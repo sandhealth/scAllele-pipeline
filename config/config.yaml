@@ -7,10 +7,10 @@ samples:
   - 1119117
   - 1077637
   - 1077638
-    #- H1TMS1
-    #- H2TMS1
-    #- H2TMS2
-    #- H3TMS1
-    #- H4TMS1
-    #- H9RimS1
-    #- H11TMS1
+  - H1TMS1
+  - H2TMS1
+  - H2TMS2
+  - H3TMS1
+  - H4TMS1
+  - H9RimS1
+  - H11TMS1
