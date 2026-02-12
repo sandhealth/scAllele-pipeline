@@ -1,16 +1,9 @@
-# import glob
-# import os
-
 configfile: "config/config.yaml"
-SAMPLES = config["samples"]
 PROJ = config["PROJ_DIR"]
-REF = config["10x_REF"]
-GENOME_FASTA = config["GENOME_FASTA"]
-
 
 rule all:
     input:
-        expand(PROJ + "filt-vcf/{sample}_filtered.vcf", sample=SAMPLES)
+        expand(PROJ + "filt-vcf/{sample}_filtered.vcf", sample=config["samples"])
 
 rule filter_vcf:
     input:
@@ -31,7 +24,7 @@ rule scAllele:
     output:
         vcf = PROJ + "scAllele/{sample}.vcf"
     params:
-        genome = GENOME_FASTA,
+        genome = config["GENOME_FASTA"],
         prefix = PROJ + "scAllele/{sample}"
     conda:
         "envs/scAllele/scAllele.yaml"
@@ -53,7 +46,6 @@ rule split_bam:
     output:
         outdir = directory(PROJ + "split-bam/{sample}")
     resources:
-        # Limits how many of instances of this rule can be executed in parallel to avoid read/write bottleneck
         diskio = 1
     conda:
         "envs/pysam.yaml"
@@ -76,7 +68,7 @@ rule filter_bam:
 # Cellranger needs to be in PATH
 rule cellranger_count:
     input:
-        ref = REF
+        ref = config["10x_REF"]
     output:
         bam = PROJ + "cellranger/{sample}/outs/possorted_genome_bam.bam"
     params:
