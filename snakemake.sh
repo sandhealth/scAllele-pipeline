@@ -5,7 +5,7 @@
 #$ -o joblog.$JOB_ID
 #$ -j y
 ## Edit the line below as needed:
-#$ -l h_rt=12:00:00,h_data=2G
+#$ -l h_rt=16:00:00,h_data=2G
 ## Modify the parallel environment
 ## and the number of cores as needed:
 #$ -pe shared 16
@@ -25,7 +25,7 @@ echo " "
 
 source ~/.bashrc
 conda activate snakemake
-snakemake --cores 16 --resources diskio=2 --use-conda --rerun-triggers mtime
+snakemake --cores 16 --resources diskio=2 --use-conda --rerun-incomplete --rerun-triggers mtime
 
 # echo job info on joblog:
 echo "Job $JOB_ID ended on:   " `hostname -s`

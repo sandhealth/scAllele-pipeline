@@ -5,5 +5,5 @@ PROJ_DIR: "/u/scratch/a/andrewj/somatic/"
 10x_REF: "/u/home/a/andrewj/ref/refdata-gex-GRCh38-2024-A"
 GENOME_FASTA: "/u/home/a/andrewj/ref/Homo_sapiens.GRCh38.dna.primary_assembly.modified.fa"
 
-# samples: ["1076767", "1076768", "1087946", "1087947", "1119116", "1119117", "1077637", "1077638", "H1TMS1", "H2TMS1", "H2TMS2", "H3TMS1", "H4TMS1", "H9RimS1", "H11TMS1"]
-samples: ["H2TMS2"]
+samples: ["1076767", "1076768", "1087946", "1087947", "1119116", "1119117", "1077637", "1077638", "H1TMS1", "H2TMS1", "H2TMS2", "H3TMS1", "H4TMS1", "H9RimS1", "H11TMS1"]
+# samples: ["H2TMS2"]
